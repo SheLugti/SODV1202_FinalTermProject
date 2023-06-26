@@ -2,17 +2,7 @@
 
 namespace Connect4_FinalProj
 {
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Game game = new Game();
-            game.Play();
-        }
-    }
-
-
+    // Game Play Class
     class Game
     {
         private Board board;
@@ -30,13 +20,13 @@ namespace Connect4_FinalProj
 
         public void Play()
         {
-            Console.WriteLine("Let's Play Connect 4");
-
-            Console.WriteLine("Player One please enter your name: ");
+            Console.WriteLine("Welcome to Connect 4 Game!"); //updated message
+            Console.WriteLine();
+            Console.Write("Player one, please enter your name: ");
             playerOne.Name = Console.ReadLine();
-            Console.WriteLine("Player Two please enter your name: ");
+            Console.Write("Player two, please enter your name: ");
             playerTwo.Name = Console.ReadLine();
-
+            Console.Clear();
             board.Display();
 
             while (!gameEnded)
@@ -45,15 +35,15 @@ namespace Connect4_FinalProj
                 board.Display();
                 if (board.CheckWin(playerOne))
                 {
-
+                    Console.WriteLine();
                     Console.WriteLine($"{playerOne.Name} wins!");
                     gameEnded = true;
                     break;
                 }
                 if (board.IsFull())
                 {
-
-                    Console.WriteLine("The board is full, it is a draw!");
+                    Console.WriteLine();
+                    Console.WriteLine("Board full! It's a draw!");
                     gameEnded = true;
                     break;
                 }
@@ -62,38 +52,38 @@ namespace Connect4_FinalProj
                 board.Display();
                 if (board.CheckWin(playerTwo))
                 {
-
+                    Console.WriteLine();
                     Console.WriteLine($"{playerTwo.Name} wins!");
                     gameEnded = true;
                     break;
                 }
                 if (board.IsFull())
                 {
-
-                    Console.WriteLine("The board is full, it is a draw!");
+                    Console.WriteLine();
+                    Console.WriteLine("Board full! It's a draw!");
                     gameEnded = true;
                     break;
                 }
             }
 
-            Console.WriteLine("Would you like to play again? (Y/N)");
+            Console.Write("Would you like to play again (Y/N)? ");
             string input = Console.ReadLine();
             if (input.ToUpper() == "Y")
             {
-
+                Console.Clear();
                 board.Reset();
                 gameEnded = false;
                 Play();
             }
             else
             {
-
-                Console.WriteLine("Thanks for playing!");
+                Console.WriteLine();
+                Console.WriteLine("Thank you for playing!");
             }
         }
     }
 
-
+    // Game Board Class
     class Board
     {
         private char[,] board;
@@ -106,29 +96,37 @@ namespace Connect4_FinalProj
 
         public void Display()
         {
-
-
-
+            Console.WriteLine();
+            Console.WriteLine(">> Now Playing Connect 4 Game <<");
+            Console.WriteLine();
             for (int row = 0; row < 6; row++)
             {
                 for (int col = 0; col < 7; col++)
                 {
-                    Console.Write($"| {board[row, col]} ");
+                    Console.Write($" | {board[row, col]}");
                 }
-                Console.WriteLine("|");
+                Console.WriteLine(" | ");
             }
-            //   Console.WriteLine("---------------");
-            Console.WriteLine("  1  2  3  4  5  6  7");
+            Console.WriteLine("   1   2   3   4   5   6   7");
+
         }
 
         public bool DropPiece(int col, Player player)
         {
             for (int row = 5; row >= 0; row--)
             {
-                if (board[row, col] == '\0')
+                try // added try catch to require input of numbers bet 1 - 7 only
+                { 
+                if (board[row, col] == ' ')
                 {
                     board[row, col] = player.Piece;
                     return true;
+                }
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Console.WriteLine("Invalid input. Please enter a number between 1 and 7.");
+                    return false;
                 }
             }
             return false;
@@ -138,7 +136,7 @@ namespace Connect4_FinalProj
         {
             char piece = player.Piece;
 
-            // Check horizontal
+            // check horizontal
             for (int row = 0; row < 6; row++)
             {
                 for (int col = 0; col < 4; col++)
@@ -151,7 +149,7 @@ namespace Connect4_FinalProj
                 }
             }
 
-            // Check vertical
+            // check vertical
             for (int row = 0; row < 3; row++)
             {
                 for (int col = 0; col < 7; col++)
@@ -164,7 +162,7 @@ namespace Connect4_FinalProj
                 }
             }
 
-            // Check diagonal (bottom left to top right)
+            // check diagonal (bottom left to top right)
             for (int row = 0; row < 3; row++)
             {
                 for (int col = 0; col < 4; col++)
@@ -177,7 +175,7 @@ namespace Connect4_FinalProj
                 }
             }
 
-            // Check diagonal (top left to bottom right)
+            // check diagonal (top left to bottom right)
             for (int row = 3; row < 6; row++)
             {
                 for (int col = 0; col < 4; col++)
@@ -196,7 +194,7 @@ namespace Connect4_FinalProj
         {
             for (int col = 0; col < 7; col++)
             {
-                if (board[0, col] == '\0')
+                if (board[0, col] == ' ')
                 {
                     return false;
                 }
@@ -211,13 +209,13 @@ namespace Connect4_FinalProj
             {
                 for (int col = 0; col < 7; col++)
                 {
-                    board[row, col] = '\0';
+                    board[row, col] = ' ';
                 }
             }
         }
     }
 
-
+    // Player Class
     class Player
     {
         public string Name { get; set; }
@@ -231,7 +229,7 @@ namespace Connect4_FinalProj
 
         public void DropPiece(Board board)
         {
-
+            Console.WriteLine();
             Console.WriteLine($"{Name}'s turn ({Piece})");
             int col;
             bool validInput = false;
@@ -241,23 +239,45 @@ namespace Connect4_FinalProj
                 try
                 {
                     col = int.Parse(Console.ReadLine()) - 1;
-
                     validInput = true;
                 }
                 catch (FormatException)
-
                 {
                     Console.WriteLine("Invalid input. Please enter a number between 1 and 7.");
                     col = -1;
                 }
                 catch (OverflowException)
-
                 {
                     Console.WriteLine("Invalid input. Please enter a number between 1 and 7.");
                     col = -1;
                 }
             } while (!validInput || !board.DropPiece(col, this));
+            Console.Clear(); //clear the screen to avoid repetitive board printing
+        }
+    }
 
+    // Main Program Class
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Game game = new Game();
+            game.Play();
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
