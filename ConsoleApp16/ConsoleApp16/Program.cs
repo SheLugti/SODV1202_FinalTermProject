@@ -2,6 +2,21 @@
 
 namespace Connect4_FinalProj
 {
+    // Abstract Player Base Class
+    abstract class PlayerBase
+    {
+        public string Name { get; set; }
+        public char Piece { get; private set; }
+
+        public PlayerBase(string name, char piece)
+        {
+            Name = name;
+            Piece = piece;
+        }
+
+        public abstract void DropPiece(Board board);
+    }
+
     // Game Play Class
     class Game
     {
@@ -22,9 +37,9 @@ namespace Connect4_FinalProj
         {
             Console.WriteLine("Welcome to Connect 4 Game!"); //updated message
             Console.WriteLine();
-            Console.Write("Player one, please enter your name: ");
+            Console.Write("Player One, please enter your name: ");
             playerOne.Name = Console.ReadLine();
-            Console.Write("Player two, please enter your name: ");
+            Console.Write("Player Two, please enter your name: ");
             playerTwo.Name = Console.ReadLine();
             Console.Clear();
             board.Display();
@@ -111,7 +126,7 @@ namespace Connect4_FinalProj
 
         }
 
-        public bool DropPiece(int col, Player player)
+        public bool DropPiece(int col, PlayerBase player)
         {
             for (int row = 5; row >= 0; row--)
             {
@@ -132,7 +147,7 @@ namespace Connect4_FinalProj
             return false;
         }
 
-        public bool CheckWin(Player player)
+        public bool CheckWin(PlayerBase player)
         {
             char piece = player.Piece;
 
@@ -205,7 +220,6 @@ namespace Connect4_FinalProj
         public void Reset()
         {
             for (int row = 0; row < 6; row++)
-
             {
                 for (int col = 0; col < 7; col++)
                 {
@@ -216,18 +230,14 @@ namespace Connect4_FinalProj
     }
 
     // Player Class
-    class Player
+    class Player: PlayerBase
     {
-        public string Name { get; set; }
-        public char Piece { get; private set; }
-
-        public Player(string name, char piece)
+        public Player(string name, char piece) : base(name, piece)
         {
-            Name = name;
-            Piece = piece;
+
         }
 
-        public void DropPiece(Board board)
+        public override void DropPiece(Board board)
         {
             Console.WriteLine();
             Console.WriteLine($"{Name}'s turn ({Piece})");
