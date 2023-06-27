@@ -2,6 +2,53 @@
 
 namespace Connect4_FinalProj
 {
+    // Game Menu Class
+    class GameMenu
+    {
+        public void Display()
+        {
+            Console.WriteLine("Welcome to Connect 4 Game!");
+            Console.WriteLine();
+            Console.WriteLine("Please select an option:");
+            Console.WriteLine("(1) Human vs Human");
+            Console.WriteLine("(2) Human vs AI");
+            Console.WriteLine("(3) Exit");
+            Console.Write("Enter your choice (1-3): ");
+
+            string input = Console.ReadLine();
+            switch (input)
+            {
+                case "1":
+                    Console.Clear();
+                    Console.Write("Enter Player One's name: ");
+                    string playerOneName = Console.ReadLine();
+                    Console.Write("Enter Player Two's name: ");
+                    string playerTwoName = Console.ReadLine();
+                    Console.Clear();
+                    Game game1 = new Game(new Player(playerOneName, 'X'), new Player(playerTwoName, 'O'));
+                    game1.Play();
+                    break;
+                case "2":
+                    Console.Clear();
+                    Console.Write("Enter Player One's name: ");
+                    string playerName = Console.ReadLine();
+                    Game game2 = new Game(new Player(playerName, 'X'), new AIPlayer("AI", 'O'));
+                    game2.Play();
+                    break;
+                case "3":
+                    Console.WriteLine();
+                    Console.WriteLine("Thank you for playing!");
+                    break;
+                default:
+                    Console.WriteLine();
+                    Console.WriteLine("Invalid input. Please select a valid option.");
+                    Console.WriteLine();
+                    Display();
+                    break;
+            }
+        }
+    }
+
     // Abstract Player Base Class
     abstract class PlayerBase
     {
@@ -21,26 +68,20 @@ namespace Connect4_FinalProj
     class Game
     {
         private Board board;
-        private Player playerOne;
-        private Player playerTwo;
+        private PlayerBase playerOne;
+        private PlayerBase playerTwo;
         private bool gameEnded;
 
-        public Game()
+        public Game(PlayerBase playerOne, PlayerBase playerTwo)
         {
             board = new Board();
-            playerOne = new Player("Player One", 'X');
-            playerTwo = new Player("Player Two", 'O');
+            this.playerOne = playerOne;
+            this.playerTwo = playerTwo;
             gameEnded = false;
         }
 
         public void Play()
         {
-            Console.WriteLine("Welcome to Connect 4 Game!"); //updated message
-            Console.WriteLine();
-            Console.Write("Player One, please enter your name: ");
-            playerOne.Name = Console.ReadLine();
-            Console.Write("Player Two, please enter your name: ");
-            playerTwo.Name = Console.ReadLine();
             Console.Clear();
             board.Display();
 
@@ -102,7 +143,6 @@ namespace Connect4_FinalProj
     class Board
     {
         private char[,] board;
-
         public Board()
         {
             board = new char[6, 7];
@@ -123,7 +163,6 @@ namespace Connect4_FinalProj
                 Console.WriteLine(" | ");
             }
             Console.WriteLine("   1   2   3   4   5   6   7");
-
         }
 
         public bool DropPiece(int col, PlayerBase player)
@@ -131,12 +170,12 @@ namespace Connect4_FinalProj
             for (int row = 5; row >= 0; row--)
             {
                 try // added try catch to require input of numbers bet 1 - 7 only
-                { 
-                if (board[row, col] == ' ')
                 {
-                    board[row, col] = player.Piece;
-                    return true;
-                }
+                    if (board[row, col] == ' ')
+                    {
+                        board[row, col] = player.Piece;
+                        return true;
+                    }
                 }
                 catch (IndexOutOfRangeException)
                 {
@@ -230,11 +269,10 @@ namespace Connect4_FinalProj
     }
 
     // Player Class
-    class Player: PlayerBase
+    class Player : PlayerBase
     {
         public Player(string name, char piece) : base(name, piece)
         {
-
         }
 
         public override void DropPiece(Board board)
@@ -266,28 +304,38 @@ namespace Connect4_FinalProj
         }
     }
 
+    // AI Player Class
+    class AIPlayer : PlayerBase
+    {
+        public AIPlayer(string name, char piece) : base(name, piece)
+        {
+        }
+
+        public override void DropPiece(Board board)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"{Name}'s turn ({Piece})");
+            //AI random move
+            Random random = new Random();
+            int col;
+            do
+            {
+                col = random.Next(7);
+            } while (!board.DropPiece(col, this));
+            Console.WriteLine($"AI placed piece in column {col + 1}");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear(); //clear the screen to avoid repetitive board printing
+        }
+    }
+
     // Main Program Class
     class Program
     {
         static void Main(string[] args)
         {
-            Game game = new Game();
-            game.Play();
+            GameMenu menu = new GameMenu();
+            menu.Display();
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
